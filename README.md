@@ -11,6 +11,7 @@ Make sure you have Docker application installed on your machine.
 - When all dependencies are running, let's install the Laravel Application by running the command `cd src`, since you already on the root folder.
 - Then run `docker-compose exec app composer install`
 - After composer install finish running, copy the .env.example using the command `cp .env.example .env` then run `docker-compose exec app php artisan key:generate`
+- Also you need to run the symbolink `docker-compose exec app php artisan symbol:link`
 - Always a good practice to run `optimize` when starting the project `docker-compose exec app php artisan optimize`
 - Then all setups are done and make sure your url is running in `localhost:5010`
 
