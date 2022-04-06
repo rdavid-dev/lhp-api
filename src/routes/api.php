@@ -1,6 +1,8 @@
 <?php
 
-use App\Http\Controllers\NoteController;
+use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\RegisterController;
+use App\Http\Controllers\Api\NoteController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +22,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::group([
-    'prefix' => 'v1/'
+    'prefix' => 'v1/',
+    'middleware' => ['json.response']
 ], function() {
-    Route::apiResource('notes', NoteController::class);
+    Route::post('/authenticate', LoginController::class);
+    Route::post('/register', RegisterController::class);
+
+    Route::group([
+        'middleware' => ['auth:sanctum']
+    ], function() {
+        Route::apiResource('notes', NoteController::class);
+    });
 });

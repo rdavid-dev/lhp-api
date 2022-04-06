@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\NoteCreateRequest;
-use App\Http\Requests\NoteUpdateRequest;
 use App\Models\Note;
 use Illuminate\Http\Request;
 use App\Http\Resources\NoteResource;
+use App\Http\Requests\NoteCreateRequest;
+use App\Http\Requests\NoteUpdateRequest;
+use App\Http\Controllers\ResponseWithHttpStatusController;
 
-class NoteController extends Controller
+class NoteController extends ResponseWithHttpStatusController
 {
     /**
      * Display a listing of the resource.
@@ -30,7 +31,9 @@ class NoteController extends Controller
      */
     public function store(NoteCreateRequest $request)
     {
-        return Note::create($request->validated());
+        $note = Note::create($request->validated());
+
+        return $this->responseCreated($note->toArray(), 'Note has been created');
     }
 
     /**
@@ -53,7 +56,9 @@ class NoteController extends Controller
      */
     public function update(NoteUpdateRequest $request, Note $note)
     {
-        return $note->update($request->only(['title', 'description']));
+        $note->update($request->only(['title', 'description']));
+
+        return $this->responseOk('Note has been updated');
     }
 
     /**
@@ -66,6 +71,6 @@ class NoteController extends Controller
     {
         $note->delete();
 
-        return response()->json([]);
+        return $this->responseNoContent();
     }
 }
