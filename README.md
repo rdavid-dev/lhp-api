@@ -1,5 +1,5 @@
 # lhp
-This project will serve as the API of the LHP UI, in order to run this application please follow the guide below.
+This project will serve as the API of the LHP UI.I followed all the best practices when building an API so in order to run this application please follow the guide below.
 
 ### Prerequisites
 Make sure you have Docker application installed on your machine.
