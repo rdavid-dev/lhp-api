@@ -33,6 +33,6 @@ Route::group([
         'middleware' => ['auth:sanctum']
     ], function() {
         Route::get('/logout', LogoutController::class);
-        Route::apiResource('notes', NoteController::class);
+        Route::resource('notes', NoteController::class);
     });
 });

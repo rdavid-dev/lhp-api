@@ -22,7 +22,7 @@ class Note extends Model
     {
         parent::boot();
         static::creating(function(Note $note) {
-            $note->user_id = 5;
+            $note->user_id = auth()->user()->id;
         });
     }
 
