@@ -1,4 +1,4 @@
-# lhp
+# LHP API
 This project will serve as the API of the LHP UI.I followed all the best practices when building an API so in order to run this application please follow the guide below.
 
 ### Prerequisites
