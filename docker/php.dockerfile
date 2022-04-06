@@ -98,6 +98,9 @@ RUN ln -s /usr/lib/x86_64-linux-gnu/libXpm.* /usr/lib/ \
 RUN docker-php-ext-install -j$(nproc) intl \
     && true
 
+# Install intl
+RUN docker-php-ext-install exif
+
 # Install mysqli
 RUN docker-php-ext-install -j$(nproc) mysqli \
     && true 

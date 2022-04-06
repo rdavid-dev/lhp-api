@@ -31,7 +31,11 @@ class NoteController extends ResponseWithHttpStatusController
      */
     public function store(NoteCreateRequest $request)
     {
-        $note = Note::create($request->validated());
+        $note = Note::create($request->only(['title', 'description']));
+        //save the file on the collection
+        //To upload in S3 bucket use the disks but for now let's use the local
+        $note->addMedia($request->file('note_file'))->toMediaCollection();
+        //$note->addMedia($request->file('note_file'), 's3')->toMediaCollection();
 
         return $this->responseCreated($note->toArray(), 'Note has been created');
     }
