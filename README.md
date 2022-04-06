@@ -17,6 +17,8 @@ Make sure you have Docker application installed on your machine.
 ### Database
 I used mysql for the database and phpmyadmin to access the data, the configuration are avaialble as well in docker-compose.yml and .env
 
+To Access PhpMyadmin run this url `localhost:5012`
+
 ### Side Notes
 - In Laravel 9 JWT doesn't support yet the latest version of the laravel, so instead I used the default one which is Sanctum or we can use Passport for serving the token
 - For the Files upload currently i used the default Flysystem disk which is local, as we need to configure AWS S3 if i want to store the files there
