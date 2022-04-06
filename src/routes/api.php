@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Auth\LoginController;
+use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\NoteController;
 use Illuminate\Http\Request;
@@ -31,6 +32,7 @@ Route::group([
     Route::group([
         'middleware' => ['auth:sanctum']
     ], function() {
+        Route::get('/logout', LogoutController::class);
         Route::apiResource('notes', NoteController::class);
     });
 });

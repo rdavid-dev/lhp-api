@@ -16,9 +16,9 @@ class NoteController extends ResponseWithHttpStatusController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $notes = Note::where('user_id', 5)->get();
+        $notes = Note::where('user_id', $request->user()->id)->get();
 
         return NoteResource::collection($notes)->response();
     }
