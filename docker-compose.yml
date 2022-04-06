@@ -1,0 +1,86 @@
+version: '3.9'
+
+services:
+  #PHP
+  app:
+    build:
+      context: ./docker
+      dockerfile: php.dockerfile
+      args:
+        - USER=node
+        - UID=197609
+    container_name: lhp-php
+    restart: unless-stopped
+    ports:
+        - 9000
+    volumes:
+      - ./src:/var/www/html
+    networks:
+      - lhp-networks
+
+  #NGINX
+  nginx:
+    build:
+      context: ./docker
+      dockerfile: nginx.dockerfile
+      args:
+        - USER=node
+        - UID=197609
+    container_name: lhp-nginx
+    restart: unless-stopped
+    ports:
+      - 5010:80
+    volumes:
+      - ./src:/var/www/html
+    depends_on:
+      - app
+    networks:
+      - lhp-networks
+
+  #MySQL
+  mysql:
+    image:  mariadb:10.7
+    container_name: lhp-mysql
+    restart: unless-stopped
+    tty: true
+    ports:
+      - 3311:3311
+    command: [--max-allowed-packet=67108864]
+    environment:
+      MYSQL_DATABASE: lhp
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+      MYSQL_RANDOM_ROOT_PASSWORD: root
+      MYSQL_TCP_PORT: 3311
+      SERVICE_TAGS: dev
+      SERVICE_NAME: mysql
+    volumes:
+      - ./db:/var/lib/mysql
+      - ./docker/config/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+    networks:
+      - lhp-networks
+    
+  #PHPMYADMIN
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: unless-stopped
+    ports:
+      - 5012:80
+    environment:
+      - PMA_HOST=lhp-mysql
+      - PMA_PORT=3311
+      - MYSQL_ROOT_PASSWORD=secret
+      - UPLOAD_LIMIT=256M
+    volumes:
+      - ./docker/config/php/php.ini:/usr/local/etc/php/conf.d/php.ini
+    depends_on:
+      - mysql
+    networks:
+      - lhp-networks
+
+networks:
+  lhp-networks:
+    driver: bridge
+volumes:
+  db:
