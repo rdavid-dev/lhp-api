@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Auth\LoginController;
 use App\Http\Controllers\Api\Auth\LogoutController;
 use App\Http\Controllers\Api\Auth\RegisterController;
 use App\Http\Controllers\Api\NoteController;
+use App\Http\Controllers\FileController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -26,6 +27,7 @@ Route::group([
     'prefix' => 'v1/',
     'middleware' => ['json.response']
 ], function() {
+    Route::post('file-upload', [FileController::class, 'uploadFile']);
     Route::post('/authenticate', LoginController::class);
     Route::post('/register', RegisterController::class);
 

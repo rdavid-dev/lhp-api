@@ -27,6 +27,7 @@ services:
         - USER=node
         - UID=197609
     container_name: lhp-nginx
+    #hostname: laravel.test
     restart: unless-stopped
     ports:
       - 5010:80
@@ -34,6 +35,9 @@ services:
       - ./src:/var/www/html
     depends_on:
       - app
+    # labels:
+    #   - 'traefik.enable=true'
+    #   - "traefik.http.routers.documents.rule=Host(`laravel.test`)"
     networks:
       - lhp-networks
 
@@ -61,9 +65,9 @@ services:
       - lhp-networks
     
   #PHPMYADMIN
-  phpmyadmin:
+  laravel-phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
+    container_name: laravel-phpmyadmin
     restart: unless-stopped
     ports:
       - 5012:80

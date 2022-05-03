@@ -80,6 +80,11 @@ RUN set -xe \
         yaml-dev \
         zlib-dev
 
+#install some base extensions
+RUN apk add --no-cache \
+        zip \
+  && docker-php-ext-install zip
+
 RUN ln -s /usr/bin/php8 /usr/bin/php
 
 # Install gd
