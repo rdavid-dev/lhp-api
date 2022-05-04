@@ -12,49 +12,65 @@ class FileController extends Controller
 {
     public function uploadFile(Request $request)
     {
-        return response()->json($this->zipFiles());
-
-        $arrayName = [];
+        $file_id = rand(100, 10000);
         if ($request->hasFile('attachments')) {
-            foreach($request->file('attachments') as $file)
-            {
-                $filename = $file->getClientOriginalName();
-                Storage::disk('local')->putFileAs(
-                    'files',
-                    $file,
-                    $filename
-                );
-                $arrayName[] = $filename;
+            $path_dir = "files/{$file_id}";
+            $attachments = $request->file('attachments');
+            // For files with more than 1 we need to store them first in local then zip them
+            if (count($attachments) > 1) {
+                foreach($attachments as $file) {
+                    $filename = $file->getClientOriginalName();
+                    Storage::disk('local')->putFileAs(
+                        $path_dir,
+                        $file,
+                        $filename
+                    );
+                    $this->moveFile('local', $path_dir, $file, $filename);
+                }
+                $this->zipFiles($file_id);
+                //Let's delete the directory after
+                Storage::disk('local')->deleteDirectory($path_dir);
+
+                return response()->json($path_dir);
+            } else {
+                // upload directly in S3
+                $this->moveFile('local', $path_dir, $attachments[0], $attachments[0]->getClientOriginalName());
             }
-
-            return response()->json($this->zipFiles());
         }
-
-        return response()->json('no files');
     }
 
-    public function zipFiles()
+    private function zipFiles($file_id)
     {
-        $zip_file = storage_path('zip_test.zip');
+        $zip_filename = "zip_test_{$file_id}.zip";
+        $zip_file = storage_path($zip_filename);
         $zip = new ZipArchive();
         $zip->open($zip_file, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
-        $path = storage_path('app/files');
+        $path = storage_path("app/files/{$file_id}");
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
         foreach ($files as $file)
         {
             // We're skipping all subfolders
             if (!$file->isDir()) {
                 $filePath     = $file->getRealPath();
-
                 // extracting filename with substr/strlen
                 $relativePath = substr($filePath, strlen($path) + 1);
-
                 $zip->addFile($filePath, $relativePath);
             }
         }
         $zip->close();
 
+        Storage::disk('local')->put("files/{$file_id}/{$zip_filename}", file_get_contents($zip_file));
+        
         return $zip_file;
+    }
+
+    private function moveFile($disk, $path, $file, $filename)
+    {
+        Storage::disk($disk)->putFileAs(
+            $path,
+            $file,
+            $filename
+        );
     }
 }
